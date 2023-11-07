@@ -53,12 +53,12 @@ def remove_text_between_tags(table_str: str):
     new_table = new_table.replace('<!--', '')
     return new_table
 
-ctg_studies = pd.read_excel('lung_cancer_studies_zipcodes_v2.xlsx')
-original_studies = pd.read_stata('studies_scraped_tables_original.dta')
+ctg_studies = pd.read_excel('Esophageal Cancer Studies 2.xlsx', sheet_name=0, skiprows=1)
+# original_studies = pd.read_stata('studies_scraped_tables_original.dta')
 
 # Remove studies that have already been scraped
-ctg_studies = ctg_studies[~ctg_studies['NCT Number'].isin(original_studies['nct'])]
-print(f"NCTs to scrape: {len(ctg_studies)}")
+# ctg_studies = ctg_studies[~ctg_studies['NCT Number'].isin(original_studies['nct'])]
+# print(f"NCTs to scrape: {len(ctg_studies)}")
 
 # Zip together 'NCT Number' and "Study URL"
 studies = list(ctg_studies['NCT Number'])
@@ -101,9 +101,9 @@ for nct, link in zip(studies, links):
     except Exception as e:
         print(e)
         df = pd.DataFrame(studies_dc)
-        df.to_stata('studies_scraped_tables_error.dta', write_index=False, version=118)
+        df.to_stata('esophageal_scraped_tables_error.dta', write_index=False, version=118)
         driver.close()
 
 # Save to stata .dta file
 df = pd.DataFrame(studies_dc)
-df.to_stata('studies_scraped_tables.dta', write_index=False, version=118)
+df.to_stata('esophageal_scraped_tables.dta', write_index=False, version=118)
