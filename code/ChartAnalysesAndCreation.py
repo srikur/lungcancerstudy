@@ -70,7 +70,7 @@ base_plot += labs(subtitle=f"p-value: {p_value.round(5)}")
 base_plot += geom_hline(yintercept=1, color='green', linetype='dashed')
 
 base_plot.save(f"{base_folder}/plots/minority_ppr_by_year.png", dpi=1200)
-base_plot.save(f"{base_folder}/plots/minority_ppr_by_year.svg", dpi=1200)
+# base_plot.save(f"{base_folder}/plots/minority_ppr_by_year.svg", dpi=1200)
 
 # ----------------- Female PPR -----------------
 gender_columns = ["Female", "Male"]
@@ -99,7 +99,7 @@ base_plot += labs(subtitle=f"p-value: {p_value.round(5)}")
 base_plot += geom_hline(yintercept=1, color='green', linetype='dashed')
 
 base_plot.save(f"{base_folder}/plots/female_ppr_by_year.png", dpi=1200)
-base_plot.save(f"{base_folder}/plots/female_ppr_by_year.svg", dpi=1200)
+# base_plot.save(f"{base_folder}/plots/female_ppr_by_year.svg", dpi=1200)
 
 # ---------------- Hispanic PPR -----------------
 hispanic_agg = df.groupby("Start Year").agg({"Hispanic": "sum", "Non-His": "sum", "Unknown Ethnicity": "sum"}).reset_index()
@@ -127,13 +127,13 @@ base_plot += labs(subtitle=f"p-value: {p_value.round(5)}")
 base_plot += geom_hline(yintercept=1, color='green', linetype='dashed')
 
 base_plot.save(f"{base_folder}/plots/hispanic_ppr_by_year.png", dpi=1200)
-base_plot.save(f"{base_folder}/plots/hispanic_ppr_by_year.svg", dpi=1200)
+# base_plot.save(f"{base_folder}/plots/hispanic_ppr_by_year.svg", dpi=1200)
 
 # ----------------- Statistical Tests -----------------
 
 # ----------------- Surgery Type and Demographic Chart -----------------
 minority_df = df[df["White"].notna()]
-minority_surgery_participation = df.groupby("Surgery?").agg({"minority_number": "sum", "Total Number": "sum"}).reset_index()
+minority_surgery_participation = minority_df.groupby("Surgery?").agg({"minority_number": "sum", "Total Number": "sum"}).reset_index()
 minority_surgery_participation["minority_surgery_participation_rate"] = minority_surgery_participation["minority_number"] / minority_surgery_participation["Total Number"]
 minority_surgery_participation["minority_surgery_ppr"] = minority_surgery_participation["minority_surgery_participation_rate"] / p2p_ratios["Total_Ratio"][0:4].sum()
 
@@ -170,19 +170,19 @@ melted_df['Surgery?'] = melted_df['Surgery?'].map({0: 'No', 1: 'Yes'})
 
 # Create grouped bar chart on a single axis
 base_plot = (
-    ggplot(melted_df, aes(x='Surgery?', y='value', fill='Demographic')) +
+    ggplot(melted_df, aes(x='Demographic', y='value', fill='Surgery?')) +
     geom_bar(stat='identity', position='dodge') +
-    labs(x='Surgery Offered?', y='Prevalence-to-Participation Ratio (PPR)', title='PPR by Surgery Offered and Demographic') +
+    labs(x='Demographic', y='Prevalence-to-Participation Ratio (PPR)', title='PPR by Surgery Offered and Demographic') +
     theme(axis_text_x=element_text(rotation=0))
 )
 
 base_plot.save(f"{base_folder}/plots/ppr_by_surgery_and_demographic.png", dpi=1200)
-base_plot.save(f"{base_folder}/plots/ppr_by_surgery_and_demographic.svg", dpi=1200)
+# base_plot.save(f"{base_folder}/plots/ppr_by_surgery_and_demographic.svg", dpi=1200)
 
 # ----------------- Funding Type and Demographic Chart -----------------
 minority_df = df[df["White"].notna()]
 minority_df["minority_participation_rate"] = minority_df["minority_number"] / minority_df["Total Number"]
-minority_funder_participation = df.groupby("Funder Type").agg({"minority_number": "sum", "Total Number": "sum"}).reset_index()
+minority_funder_participation = minority_df.groupby("Funder Type").agg({"minority_number": "sum", "Total Number": "sum"}).reset_index()
 minority_funder_participation["minority_participation_rate"] = minority_funder_participation["minority_number"] / minority_funder_participation["Total Number"]
 minority_funder_participation["minority_ppr"] = minority_funder_participation["minority_participation_rate"] / p2p_ratios["Total_Ratio"][0:4].sum()
 
@@ -204,17 +204,17 @@ merged_df = merged_df[["Funder Type", "minority_ppr", "female_ppr", "hispanic_pp
 # Bar Chart
 melted_df = merged_df.melt(id_vars='Funder Type', value_vars = ["minority_ppr", "female_ppr", "hispanic_ppr"])
 melted_df['Demographic'] = melted_df['variable'].map({'minority_ppr': 'Minority', 'female_ppr': 'Female', 'hispanic_ppr': 'Hispanic'})
-melted_df['Funder Type'] = melted_df['Funder Type'].map({'OTHER': 'Other', 'IND': 'Industry', 'NIH': 'NIH', 'OTHER': 'Other'})
+melted_df['Funder Type'] = melted_df['Funder Type'].map({'OTHER': 'Other', 'INDUSTRY': 'Industry', 'NIH': 'NIH', 'OTHER': 'Other'})
 
 base_plot = (
-    ggplot(melted_df, aes(x='Funder Type', y='value', fill='Demographic')) +
+    ggplot(melted_df, aes(x='Demographic', y='value', fill='Funder Type')) +
     geom_bar(stat='identity', position='dodge') +
-    labs(x='Funder Type', y='Prevalence-to-Participation Ratio (PPR)', title='PPR by Funder Type and Demographic') +
+    labs(x='Demographic', y='Prevalence-to-Participation Ratio (PPR)', title='PPR by Funder Type and Demographic') +
     theme(axis_text_x=element_text(rotation=0))
 )
 
 base_plot.save(f"{base_folder}/plots/ppr_by_funder_and_demographic.png", dpi=1200)
-base_plot.save(f"{base_folder}/plots/ppr_by_funder_and_demographic.svg", dpi=1200)
+# base_plot.save(f"{base_folder}/plots/ppr_by_funder_and_demographic.svg", dpi=1200)
 
 # ----------------- Ethnicity Reporting Rate -----------------
 # Group by year and get rate of reporting for ethnicity. i.e. per year, rate of has_ethnicity == 1 vs total studies
@@ -239,7 +239,7 @@ base_plot += labs(subtitle=f"p-value: {p_value.round(10)}")
 base_plot += geom_hline(yintercept=1, color='green', linetype='dashed')
 
 base_plot.save(f"{base_folder}/plots/ethnicity_reporting_rate_over_time.png", dpi=1200)
-base_plot.save(f"{base_folder}/plots/ethnicity_reporting_rate_over_time.svg", dpi=1200)
+# base_plot.save(f"{base_folder}/plots/ethnicity_reporting_rate_over_time.svg", dpi=1200)
 
 # ---------------- Race Reporting Rate -----------------
 race_reporting_df = df.groupby("Start Year").agg({"has_race": ["mean", "count"]})
@@ -263,4 +263,4 @@ base_plot += labs(subtitle=f"p-value: {p_value.round(5)}")
 base_plot += geom_hline(yintercept=1, color='green', linetype='dashed')
 
 base_plot.save(f"{base_folder}/plots/race_reporting_rate_over_time.png", dpi=1200)
-base_plot.save(f"{base_folder}/plots/race_reporting_rate_over_time.svg", dpi=1200)
+# base_plot.save(f"{base_folder}/plots/race_reporting_rate_over_time.svg", dpi=1200)
