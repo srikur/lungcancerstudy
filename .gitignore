@@ -1,5 +1,4 @@
-# .gitignore
-
+.gitignore
 .DS_Store
 
 # VS Code
